@@ -34,6 +34,7 @@ class BotCMD():
     }
 
     HELP_MSG = "\n".join([">> Help <<",
+                          "This application can search for animal's description. Can also read/write/list file for admin",
                           "search <animal>",
                           "login <user> <password>",
                           "read <file_name>",
