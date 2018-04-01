@@ -36,6 +36,19 @@ channel_secret = os.getenv('LINE_CHANNEL_SECRET', None)
 channel_access_token = os.getenv('LINE_CHANNEL_ACCESS_TOKEN', None)
 
 admin_password = os.getenv('ADMIN_PASSWORD', None)
+flag = os.getenv('FLAG', None)
+flag_file = os.getenv('FLAG_FILE', None)
+if flag is None or flag_file is None:
+    print('Specify ADMIN_PASSWORD, FLAG, FLAG_FILE to start CTF')
+    sys.exit(1)
+
+# Always start application as root to get the BEST experience XD
+if os.geteuid() != 0:
+    print('Please start this application as root')
+    sys.exit(1)
+
+flag_file = open(flag_file, "w+")
+flag_file.write(flag)
 
 if channel_secret is None:
     print('Specify LINE_CHANNEL_SECRET as environment variable.')
