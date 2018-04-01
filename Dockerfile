@@ -21,4 +21,4 @@ ENV FLAG			{FLAG}
 ENV FLAG_FILE 			{FLAG_FILE}
 
 # Run manage.py when the container launches
-CMD ["gunicorn", "manage:app"]
+CMD ["gunicorn", "-b", "0.0.0.0:8000", "manage:app"]

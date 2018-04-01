@@ -71,6 +71,7 @@ def callback():
 
     # get request body as text
     body = request.get_data(as_text=True)
+    print("Request body: " + body)
     app.logger.info("Request body: " + body)
 
     # handle webhook body
@@ -100,4 +101,4 @@ if __name__ == "__main__":
     arg_parser.add_argument('-d', '--debug', default=False, help='debug')
     options = arg_parser.parse_args()
 
-    app.run(debug=options.debug, port=options.port)
+    app.run(debug=options.debug, host='0.0.0.0', port=options.port)
