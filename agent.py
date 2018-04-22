@@ -97,13 +97,14 @@ class Agent():
     SEARCH_NOT_FOUND_MSG = "Not found"
 
     LOGIN_CMD = "SELECT password FROM users WHERE user = ?"
-    ERROR_LOGIN = "Wrong username or password"
+    LOGIN_ERROR = "Wrong username or password"
     LOGIN_SUCCESS = "User login successfully."
 
     ERROR_FILE_READ_MSG = "Unable to read that file"
 
-    INFO_WRITE_INIT = "Start writing file. Please enter data in your next message"
-    INFO_WRITE_DONE = "Finish writing to file."
+    WRITE_BASE_FILE_PATH = "appFile/"    
+    WRITE_INIT_INFO = "Start writing file. Please enter data in your next message"
+    WRITE_DONE_INFO = "Finish writing to file."
 
     def __init__(self, admin_password=None):
         # Map room_id with order property
@@ -127,7 +128,7 @@ class Agent():
         try:
             user, password = params.split(" ")
         except:
-            return self.ERROR_LOGIN
+            return self.LOGIN_ERROR
 
         try:
             cursor = self.conn.cursor()
@@ -135,16 +136,16 @@ class Agent():
 
             row = cursor.fetchone()
             if not row:
-                return self.ERROR_LOGIN
+                return self.LOGIN_ERROR
 
             db_password = row[0]
             if password == db_password:
                 self.session[user_id]["login"] = True
                 return self.LOGIN_SUCCESS
         except:
-            return self.ERROR_LOGIN
+            return self.LOGIN_ERROR
 
-        return self.ERROR_LOGIN 
+        return self.LOGIN_ERROR 
 
     def __handle_new_session(self, userId):
         if userId not in self.session:
@@ -163,7 +164,7 @@ class Agent():
 
     def __handle_read(self, filePath):
         try:
-            f = open(filePath, "r")
+            f = open(self.WRITE_BASE_FILE_PATH + filePath, "r")
         except:
             return self.ERROR_FILE_READ_MSG
 
@@ -171,20 +172,20 @@ class Agent():
         f.close()
         return content
 
-    # We do not have to validate the filePath. Even user can overwrite something, they cannot execute them anyway. This is docker image so we can everything run as root right ?
+    # We do not have to validate the filePath. Even user can overwrite something, they cannot execute them anyway.
     def __handle_write_init(self, user_id, filePath):
         self.session[user_id]["write"] = filePath 
-        return self.INFO_WRITE_INIT 
+        return self.WRITE_INIT_INFO 
 
     def __handle_write_exec(self, user_id, data):
         filePath = self.session[user_id]["write"]
         self.session[user_id]["write"] = None
-        with open(filePath, "w+") as f:
+        with open(self.WRITE_BASE_FILE_PATH + filePath, "w+") as f:
             f.write(data)
-        return self.INFO_WRITE_DONE 
+        return self.WRITE_DONE_INFO 
 
     def __handle_list(self):
-        return subprocess.Popen("ls", stdout=subprocess.PIPE).stdout.read()
+        return subprocess.Popen(["ls", self.WRITE_BASE_FILE_PATH], stdout=subprocess.PIPE).stdout.read()
 
     def __handle_help(self):
         return BotCMD.HELP_MSG
