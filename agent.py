@@ -84,6 +84,7 @@ class Agent():
     SEARCH_NOT_FOUND_MSG = "Not found. Try simple animals like dog or cat !!"
 
     LOGIN_CMD = "SELECT password FROM users WHERE user = ?"
+    LOGIN_ERROR = "Wrong username or password"
     LOGIN_SUCCESS = "Password is the flag. Congrats :)"
 
     def __init__(self, admin_password=None):
